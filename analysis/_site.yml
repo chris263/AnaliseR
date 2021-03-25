@@ -1,7 +1,7 @@
-name: "AnaliseR"
+name: AnaliseR
 output_dir: ../docs
 navbar:
-  title: "AnaliseR"
+  title: AnaliseR
   left:
   - text: Home
     href: index.html
@@ -9,6 +9,10 @@ navbar:
     href: about.html
   - text: License
     href: license.html
+  right:
+  - icon: fa-github
+    text: Source code
+    href: https://github.com/chris263/AnaliseR
 output:
   workflowr::wflow_html:
     toc: yes
