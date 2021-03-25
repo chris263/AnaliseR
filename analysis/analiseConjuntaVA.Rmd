@@ -1,0 +1,246 @@
+---
+title: "Analise Conjunta Virginia"
+author: "Chris Simoes"
+date: "3/24/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE)
+knitr::opts_chunk$set(message=FALSE)
+knitr::opts_chunk$set(cache=FALSE)
+knitr::opts_chunk$set(tidy=TRUE)
+knitr::opts_chunk$set(results="hold")
+knitr::opts_chunk$set(collapse=TRUE)
+knitr::opts_chunk$set(fig.show="hold")
+knitr::opts_chunk$set(tidy.opts = list(wrap=FALSE))
+```
+
+## Objectives
+1. Find the best candidate to become a commercial variety
+2. Develop a selection index
+
+### Script setup
+Install packages, start the README.md, set the random seed  
+```{r Script setup, echo=FALSE, include=FALSE}
+ip <- installed.packages()
+packages_used <- c("agricolae","emmeans","lme4","tidyverse", "devtools", "here")
+
+ip <- installed.packages()
+for (package in packages_used){
+  if (!(package %in% ip[,"Package"])) install.packages(package)
+}#END packages_used
+
+here::i_am("analysis/analiseConjuntaVA.Rmd")
+
+source(here::here("code/addToREADME.R"))
+
+addToREADME(paste0("## ", rmarkdown::metadata$title), append=F)
+addToREADME(c(date(), ""))
+
+packages_info <- ip[packages_used, c("Package", "Version", "Built")]
+addToREADME(c("The packages used in this script are:", "Package, Version, Built"))
+apply(packages_info, 1, function(vec) addToREADME(paste(vec, collapse=" ")))
+addToREADME("")
+
+random_seed <- 835246
+set.seed(random_seed)
+addToREADME(paste("The random seed is", random_seed))
+```
+
+```{r import data, echo=TRUE}
+va <- read.csv("data/A427_converted.csv", sep=",", header=T)
+
+colnames(va) <- c("germplasmName","Replication","Location","kgHa","DollarKg","DollarHa","IQS","Talo","TotalSugar","TotalAlcaloids")
+
+Traits <- colnames(va)[4:length(va)]
+nTraits <- ncol(va)-3
+Treatments <- unique(va$germplasmName)
+Locations <- unique(va$Location)
+
+#This is the economic value for each trait
+ecoValue <- c(1.1,1.1,1.60,1.1,-1.05,1.1,-1.05)
+
+
+pre_result <- matrix(data=NA, nrow = nTraits, ncol = 3)
+colnames(pre_result)<- c("h2", "varG", "varP")
+rownames(pre_result)<-Traits
+
+library("lme4")
+library("emmeans")
+
+#Centering the data - Function scale sets mean = 0 
+#It is important to scale the data in order to get a sum of different traits afterwards
+va_centered <- va
+
+for(i in 1:nTraits){
+  va_centered[,3+i] <- scale(va[,i+3], scale = TRUE)
+}
+
+for (i in 4:length(va_centered)){
+  
+  Pheno <- colnames(va_centered)[i]
+  model <- lmer( get(Pheno) ~ (1|germplasmName) + (1|Replication) +(1|Location) + (1|germplasmName:Location),
+                 na.action = na.exclude,
+                 data=va_centered)
+  
+  variance = as.data.frame(VarCorr(model))
+  gvar <- variance[2,"vcov"]
+  envar <- variance[3, "vcov"]
+  resvar <- variance [5, "vcov"]
+  addCor <- variance[2,"sdcor"]
+  phenovar <- gvar + envar + resvar
+  H2 = gvar/phenovar
+  pre_result[i-3,1] <- H2
+  pre_result[i-3,2] <- gvar
+  pre_result[i-3,3] <- phenovar
+  
+}
+
+preresults_table <- knitr::kable(pre_result)
+preresults_table
+
+```
+
+## Pre processing
+
+Preparing for Pheno and Geno matrix
+Calculating regression coefficients 
+
+```{r pre process, echo = TRUE}
+
+
+
+
+##regression coefficient - if necessary
+# rP <- c()
+# count=1
+# for(i in 1:nTraits){
+#   t1 <- as.numeric(va[,i+3])
+#   var1 <- pre_result[i,3]
+#   if(i < nTraits){
+#     for (j in (i+1):nTraits){
+#       t2 <- as.numeric(va[,j+3])
+#       var2 <- pre_result[j,3]
+#       cal_rP <- var(t1,t2, na.rm = TRUE)/sqrt(var1*var2)
+#       rP[count] <- cal_rP
+#       count=count+1
+#     }
+#   }
+# }
+
+# 1 Phenotypic matrix
+#The of diagonal is defined by the covariation between the traits.
+# cov(1,2) = rP x sqrt(varPheno[1] x varPheno[2])
+PhenoMatrix <- matrix(data = NA, ncol = nTraits, nrow = nTraits)
+for (i in 1:nTraits){
+  t1 <- as.numeric(va_centered[,i+3])
+  if (i < nTraits){
+    for (j in (i+1):nTraits){
+      t2 <- as.numeric(va_centered[,j+3])
+      offDiagonal <- var(t1,t2, na.rm = TRUE)
+      PhenoMatrix[i,j] <- offDiagonal
+      PhenoMatrix[j,i] <- offDiagonal
+    }
+  }
+  PhenoMatrix[i,i] <- pre_result[i,3]
+}
+
+InvPhenoMatrix <- solve(PhenoMatrix) #solve is a command to calculate the inverted matrix
+
+# 2 Genotypic matrix
+GenoMatrix <- matrix(pre_result[,2])
+
+# 3 Economic value
+# Already defined as ecoValue
+
+# Calculate the Index
+SelectionIndex <- InvPhenoMatrix %*% GenoMatrix
+
+# Multiplying the economic value
+for (i in 1:nTraits) {
+  SelectionIndex[i,1] <- SelectionIndex[i,1]*ecoValue[i]
+}
+
+rownames(SelectionIndex) <- Traits
+colnames(SelectionIndex) <- "Index"
+
+
+#Calculate the index per germplasmName
+preresults <- matrix(data = NA, nrow = length(Treatments), ncol = length(Traits))
+colnames(preresults) <- Traits
+rownames(preresults) <- Treatments
+for(i in 1:length(Treatments)){
+  my.data.frame <- subset(va_centered , germplasmName == Treatments[i] )
+  for(j in 1:nTraits){
+    preresults[i,j] <- mean(my.data.frame[,j+3], na.rm=TRUE) 
+  }
+}
+
+index_matrix <- preresults %*% SelectionIndex
+
+# print(index_matrix)
+results<-as.data.frame(cbind(preresults, index_matrix))
+# print(SelectionIndex)
+results <-results[order(results$Index, decreasing = TRUE),]
+
+results_table <- knitr::kable(results)
+
+#Calculate the index per germplasmName and Location
+Locresults <- matrix(data = 0, nrow = length(Treatments), ncol = length(Locations))
+colnames(Locresults) <- Locations
+rownames(Locresults) <- Treatments
+for(i in 1:length(Treatments)){
+  for(j in 1:length(Locations)){
+    loc.data.frame <- subset(va_centered , germplasmName == Treatments[i] & Location == Locations[j] )
+    for(k in 1:length(Traits)){
+      value <- mean(loc.data.frame[,k+3], na.rm=TRUE) * SelectionIndex[k,1]
+      Locresults[i,j] <- Locresults[i,j] + value
+    }
+    
+  }
+  
+}
+
+results_table
+
+```
+
+## Stability analysis with AMMI
+This is using Bilinear sowftware
+
+```{r stability, echo=TRUE}
+
+library("Bilinear")
+
+# # Prepare a matrix with mean of treatments per location
+# stability <- matrix(data = NA, nrow = length(Treatments), ncol = length(Locations))
+# colnames(stability) <- Locations
+# rownames(stability) <- Treatments
+# for(i in 1:length(Treatments)){
+#    for(j in 1:length(Locations)){
+#     my.stability <- subset(va_centered , germplasmName == Treatments[i] & Location == Locations[j] )
+#     stability[i,j] <- mean(my.stability[,4], na.rm=TRUE)
+#   }
+# }
+# 
+AMMIfit <- bilinear(x = Locresults, verbose=F)
+AMMIplot(AMMIfit)
+# AMMIplot(AMMIfit, PC=2)
+# library("agricolae")
+# model<- with(Locresults,AMMI(Location, germplasmName, Replication, get(Locations[1]), console=FALSE))
+# model$ANOVA
+# # see help(plot.AMMI)
+# # biplot
+# plot(model)
+# AMMI.contour(model,distance=0.3,shape=8,col="red",lwd=2,lty=5)
+# # triplot PC 1,2,3 
+# plot(model, type=2, number=TRUE)
+# # biplot PC1 vs Yield 
+# plot(model, first=0,second=1, number=TRUE)
+# # Example 2
+
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
