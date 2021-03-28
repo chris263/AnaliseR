@@ -407,7 +407,7 @@ div.tocify {
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -416,7 +416,7 @@ div.tocify {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -425,10 +425,10 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-03-25
+<strong>Last updated:</strong> 2021-03-28
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>AnaliseR/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
@@ -444,12 +444,12 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
 </div>
 </div>
 </div>
@@ -516,16 +516,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomchris263AnaliseRtreedf218f9aa1a4bb6476950ee619cbaa5e771b4757targetblankdf218f9a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/chris263/AnaliseR/tree/df218f9aa1a4bb6476950ee619cbaa5e771b4757" target="_blank">df218f9</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomchris263AnaliseRtree10df00dce11a978fc0283a884dc0058fefe97bb5targetblank10df00da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/chris263/AnaliseR/tree/10df00dce11a978fc0283a884dc0058fefe97bb5" target="_blank">10df00d</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomchris263AnaliseRtreedf218f9aa1a4bb6476950ee619cbaa5e771b4757targetblankdf218f9a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomchris263AnaliseRtree10df00dce11a978fc0283a884dc0058fefe97bb5targetblank10df00da" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/chris263/AnaliseR/tree/df218f9aa1a4bb6476950ee619cbaa5e771b4757" target="_blank">df218f9</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/chris263/AnaliseR/tree/10df00dce11a978fc0283a884dc0058fefe97bb5" target="_blank">10df00d</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -534,6 +534,9 @@ Note that you need to be careful to ensure that all relevant files for the analy
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+
+Unstaged changes:
+    Modified:   analysis/analiseConjuntaVA.Rmd
 
 </code></pre>
 <p>
@@ -574,6 +577,23 @@ Message
 <tbody>
 <tr>
 <td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/chris263/AnaliseR/10df00dce11a978fc0283a884dc0058fefe97bb5/docs/analiseConjuntaVA.html" target="_blank">10df00d</a>
+</td>
+<td>
+chris263
+</td>
+<td>
+2021-03-25
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
 Rmd
 </td>
 <td>
@@ -606,9 +626,9 @@ Joint Analysis
 <h3>Script setup</h3>
 <p>Install packages, start the README.md, set the random seed</p>
 <pre class="r"><code>va &lt;- read.csv(&quot;data/A427_converted.csv&quot;, sep = &quot;,&quot;, header = T)
-
-colnames(va) &lt;- c(&quot;germplasmName&quot;, &quot;Replication&quot;, &quot;Location&quot;, &quot;kgHa&quot;, &quot;DollarKg&quot;, 
-    &quot;DollarHa&quot;, &quot;IQS&quot;, &quot;Talo&quot;, &quot;TotalSugar&quot;, &quot;TotalAlcaloids&quot;)
+name_cols &lt;- c(&quot;germplasmName&quot;, &quot;Replication&quot;, &quot;Location&quot;, &quot;kgHa&quot;, &quot;DollarKg&quot;, &quot;DollarHa&quot;, 
+    &quot;IQS&quot;, &quot;Talo&quot;, &quot;TotalSuggar&quot;, &quot;TotalAlcaloids&quot;)
+colnames(va) &lt;- name_cols
 
 Traits &lt;- colnames(va)[4:length(va)]
 nTraits &lt;- ncol(va) - 3
@@ -616,7 +636,7 @@ Treatments &lt;- unique(va$germplasmName)
 Locations &lt;- unique(va$Location)
 
 #This is the economic value for each trait
-ecoValue &lt;- c(1.1, 1.1, 1.6, 1.1, -1.05, 1.1, -1.05)
+econValue &lt;- c(1.5, 1.01, 1.45, 1.55, -1.25, -1.1, -1.16)
 
 
 pre_result &lt;- matrix(data = NA, nrow = nTraits, ncol = 3)
@@ -696,7 +716,7 @@ preresults_table</code></pre>
 <td align="right">1.0014486</td>
 </tr>
 <tr class="even">
-<td align="left">TotalSugar</td>
+<td align="left">TotalSuggar</td>
 <td align="right">0.0741628</td>
 <td align="right">0.0771881</td>
 <td align="right">1.0407916</td>
@@ -715,9 +735,6 @@ preresults_table</code></pre>
 <h2>Pre processing</h2>
 <p>Preparing for Pheno and Geno matrix Calculating regression coefficients</p>
 <pre class="r"><code>
-
-
-
 ##regression coefficient - if necessary
 # rP &lt;- c()
 # count=1
@@ -752,77 +769,69 @@ for (i in 1:nTraits) {
     PhenoMatrix[i, i] &lt;- pre_result[i, 3]
 }
 
-InvPhenoMatrix &lt;- solve(PhenoMatrix)  #solve is a command to calculate the inverted matrix
 
 # 2 Genotypic matrix
-GenoMatrix &lt;- matrix(pre_result[, 2])
+GenoMatrix &lt;- diag(c(pre_result[, 2]))
+
 
 # 3 Economic value
-# Already defined as ecoValue
+# Already defined as econValue
 
-# Calculate the Index
-SelectionIndex &lt;- InvPhenoMatrix %*% GenoMatrix
-
-# Multiplying the economic value
-for (i in 1:nTraits) {
-    SelectionIndex[i, 1] &lt;- SelectionIndex[i, 1] * ecoValue[i]
-}
-
+# Calculate the Index. It is a matrix with 1 column and nTraits rows
+SelectionIndex &lt;- solve(PhenoMatrix) %*% GenoMatrix %*% econValue
 rownames(SelectionIndex) &lt;- Traits
 colnames(SelectionIndex) &lt;- &quot;Index&quot;
 
+print(SelectionIndex)
+                    Index
+kgHa           -1.0200317
+DollarKg        2.0116488
+DollarHa        1.1858984
+IQS            -1.6080331
+Talo           -0.6123607
+TotalSuggar    -1.3899197
+TotalAlcaloids -0.5495333</code></pre>
+</div>
+<div id="making-selection-with-index" class="section level2">
+<h2>Making Selection with Index</h2>
+<p>Here I’m using the index to multiply by each trait. After that it will be possible make a rank.</p>
+<pre class="r"><code>library(dplyr)
+library(tidyr)
 
 #Calculate the index per germplasmName
-preresults &lt;- matrix(data = NA, nrow = length(Treatments), ncol = length(Traits))
+preresults &lt;- va_centered %&gt;% group_by(germplasmName) %&gt;% summarise(kgHa = mean(kgHa, 
+    na.rm = TRUE), DollarKg = mean(DollarKg, na.rm = TRUE), DollarHa = mean(DollarHa, 
+    na.rm = TRUE), IQS = mean(IQS, na.rm = TRUE), Talo = mean(Talo, na.rm = TRUE), 
+    TotalSuggar = mean(TotalSuggar, na.rm = TRUE), TotalAlcaloids = mean(TotalAlcaloids, 
+        na.rm = TRUE))
+
+#Removing extra column with germplasmName
+preresults &lt;- data.matrix(subset(preresults, select = -c(germplasmName)))
+
+#Naming rows and cols
 colnames(preresults) &lt;- Traits
 rownames(preresults) &lt;- Treatments
-for (i in 1:length(Treatments)) {
-    my.data.frame &lt;- subset(va_centered, germplasmName == Treatments[i])
-    for (j in 1:nTraits) {
-        preresults[i, j] &lt;- mean(my.data.frame[, j + 3], na.rm = TRUE)
-    }
-}
 
+#Index Matrix has 1 column and the number of rows is the number of germplasmName
 index_matrix &lt;- preresults %*% SelectionIndex
 
-# print(index_matrix)
-results &lt;- as.data.frame(cbind(preresults, index_matrix))
-# print(SelectionIndex)
+# Creating a matrix with real average (not centered)
+preresults2 &lt;- va %&gt;% group_by(germplasmName) %&gt;% summarise(kgHa = mean(kgHa, na.rm = TRUE), 
+    DollarKg = mean(DollarKg, na.rm = TRUE), DollarHa = mean(DollarHa, na.rm = TRUE), 
+    IQS = mean(IQS, na.rm = TRUE), Talo = mean(Talo, na.rm = TRUE), TotalSuggar = mean(TotalSuggar, 
+        na.rm = TRUE), TotalAlcaloids = mean(TotalAlcaloids, na.rm = TRUE))
+
+preresults2 &lt;- data.matrix(subset(preresults2, select = -c(germplasmName)))
+
+#print(index_matrix)
+# Result matrix has all traits + selection index
+results &lt;- as.data.frame(cbind(preresults2, index_matrix))
 results &lt;- results[order(results$Index, decreasing = TRUE), ]
 
+#Print the result with Rmarkdown 
 results_table &lt;- knitr::kable(results)
-
-#Calculate the index per germplasmName and Location
-Locresults &lt;- matrix(data = 0, nrow = length(Treatments), ncol = length(Locations))
-colnames(Locresults) &lt;- Locations
-rownames(Locresults) &lt;- Treatments
-for (i in 1:length(Treatments)) {
-    for (j in 1:length(Locations)) {
-        loc.data.frame &lt;- subset(va_centered, germplasmName == Treatments[i] &amp; Location == 
-            Locations[j])
-        for (k in 1:length(Traits)) {
-            value &lt;- mean(loc.data.frame[, k + 3], na.rm = TRUE) * SelectionIndex[k, 
-                1]
-            Locresults[i, j] &lt;- Locresults[i, j] + value
-        }
-        
-    }
-    
-}
-
 results_table</code></pre>
 <table>
-<colgroup>
-<col width="3%" />
-<col width="11%" />
-<col width="11%" />
-<col width="11%" />
-<col width="11%" />
-<col width="11%" />
-<col width="11%" />
-<col width="15%" />
-<col width="11%" />
-</colgroup>
 <thead>
 <tr class="header">
 <th align="left"></th>
@@ -831,7 +840,7 @@ results_table</code></pre>
 <th align="right">DollarHa</th>
 <th align="right">IQS</th>
 <th align="right">Talo</th>
-<th align="right">TotalSugar</th>
+<th align="right">TotalSuggar</th>
 <th align="right">TotalAlcaloids</th>
 <th align="right">Index</th>
 </tr>
@@ -839,157 +848,157 @@ results_table</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">2</td>
-<td align="right">-0.0413270</td>
-<td align="right">-0.0569307</td>
-<td align="right">-0.0923850</td>
-<td align="right">-0.0410660</td>
-<td align="right">-0.9880427</td>
-<td align="right">-0.0260208</td>
-<td align="right">-0.4979715</td>
-<td align="right">0.4443771</td>
+<td align="right">4006.970</td>
+<td align="right">3.064545</td>
+<td align="right">12239.588</td>
+<td align="right">67.01515</td>
+<td align="right">28.86515</td>
+<td align="right">12.87576</td>
+<td align="right">3.286667</td>
+<td align="right">0.7989638</td>
 </tr>
 <tr class="even">
-<td align="left">10</td>
-<td align="right">-0.2350294</td>
-<td align="right">-0.4952417</td>
-<td align="right">-0.4752692</td>
-<td align="right">-0.3209408</td>
-<td align="right">-0.1215904</td>
-<td align="right">-0.1614929</td>
-<td align="right">-0.9352278</td>
-<td align="right">0.3488547</td>
-</tr>
-<tr class="odd">
 <td align="left">5</td>
-<td align="right">0.0624544</td>
-<td align="right">0.6452181</td>
-<td align="right">0.4512669</td>
-<td align="right">0.6620105</td>
-<td align="right">-0.4540753</td>
-<td align="right">0.5072034</td>
-<td align="right">-0.3731158</td>
-<td align="right">0.2650146</td>
-</tr>
-<tr class="even">
-<td align="left">9</td>
-<td align="right">-0.2201756</td>
-<td align="right">0.3112187</td>
-<td align="right">0.0080297</td>
-<td align="right">0.5522052</td>
-<td align="right">-0.0846837</td>
-<td align="right">0.0398096</td>
-<td align="right">-0.4816589</td>
-<td align="right">0.2566217</td>
+<td align="right">4061.879</td>
+<td align="right">3.314545</td>
+<td align="right">13469.310</td>
+<td align="right">73.61515</td>
+<td align="right">30.11636</td>
+<td align="right">14.92727</td>
+<td align="right">3.359091</td>
+<td align="right">0.4829939</td>
 </tr>
 <tr class="odd">
 <td align="left">6</td>
-<td align="right">0.2383445</td>
-<td align="right">0.4937242</td>
-<td align="right">0.4848833</td>
-<td align="right">0.4331394</td>
-<td align="right">-0.3195812</td>
-<td align="right">0.4426179</td>
-<td align="right">-0.4546116</td>
-<td align="right">0.1811778</td>
+<td align="right">4154.939</td>
+<td align="right">3.260606</td>
+<td align="right">13545.349</td>
+<td align="right">71.46667</td>
+<td align="right">30.43152</td>
+<td align="right">14.67879</td>
+<td align="right">3.311818</td>
+<td align="right">0.4589203</td>
 </tr>
 <tr class="even">
 <td align="left">4</td>
-<td align="right">0.0883998</td>
-<td align="right">0.2681855</td>
-<td align="right">0.2393704</td>
-<td align="right">0.1439032</td>
-<td align="right">-0.8920863</td>
-<td align="right">0.2913933</td>
-<td align="right">0.3540774</td>
-<td align="right">0.1712825</td>
+<td align="right">4075.606</td>
+<td align="right">3.180303</td>
+<td align="right">12990.008</td>
+<td align="right">68.75152</td>
+<td align="right">29.09000</td>
+<td align="right">14.09697</td>
+<td align="right">3.780909</td>
+<td align="right">0.4484802</td>
+</tr>
+<tr class="odd">
+<td align="left">9</td>
+<td align="right">3912.344</td>
+<td align="right">3.195625</td>
+<td align="right">12466.723</td>
+<td align="right">72.58437</td>
+<td align="right">30.98194</td>
+<td align="right">13.12903</td>
+<td align="right">3.296129</td>
+<td align="right">0.2334193</td>
+</tr>
+<tr class="even">
+<td align="left">10</td>
+<td align="right">3904.485</td>
+<td align="right">2.908485</td>
+<td align="right">11373.517</td>
+<td align="right">64.38788</td>
+<td align="right">30.89545</td>
+<td align="right">12.35455</td>
+<td align="right">3.033030</td>
+<td align="right">0.0088055</td>
 </tr>
 <tr class="odd">
 <td align="left">1</td>
-<td align="right">0.1516881</td>
-<td align="right">-0.4109839</td>
-<td align="right">-0.1737018</td>
-<td align="right">-0.4487729</td>
-<td align="right">0.1025233</td>
-<td align="right">-0.0780043</td>
-<td align="right">-0.6212600</td>
-<td align="right">0.1135952</td>
+<td align="right">4109.091</td>
+<td align="right">2.938485</td>
+<td align="right">12055.652</td>
+<td align="right">63.18788</td>
+<td align="right">31.42061</td>
+<td align="right">12.67576</td>
+<td align="right">3.215152</td>
+<td align="right">-0.0787915</td>
 </tr>
 <tr class="even">
-<td align="left">14</td>
-<td align="right">-0.1097700</td>
-<td align="right">-0.1309755</td>
-<td align="right">-0.1814220</td>
-<td align="right">-0.0675363</td>
-<td align="right">-0.1968553</td>
-<td align="right">0.0117853</td>
-<td align="right">0.3107175</td>
-<td align="right">0.0769265</td>
-</tr>
-<tr class="odd">
 <td align="left">12</td>
-<td align="right">-0.7980379</td>
-<td align="right">-1.3225006</td>
-<td align="right">-1.3051536</td>
-<td align="right">-1.3126079</td>
-<td align="right">0.0509242</td>
-<td align="right">-0.7033811</td>
-<td align="right">-0.3391592</td>
-<td align="right">0.0682498</td>
-</tr>
-<tr class="even">
-<td align="left">13</td>
-<td align="right">-0.0161835</td>
-<td align="right">0.2052049</td>
-<td align="right">0.1120087</td>
-<td align="right">0.1716647</td>
-<td align="right">0.4825985</td>
-<td align="right">0.0094224</td>
-<td align="right">0.5928183</td>
-<td align="right">-0.2956711</td>
+<td align="right">3606.606</td>
+<td align="right">2.613939</td>
+<td align="right">9496.347</td>
+<td align="right">55.07879</td>
+<td align="right">31.29970</td>
+<td align="right">10.26970</td>
+<td align="right">3.378788</td>
+<td align="right">-0.1506069</td>
 </tr>
 <tr class="odd">
 <td align="left">11</td>
-<td align="right">0.0595334</td>
-<td align="right">-0.0305469</td>
-<td align="right">0.0261255</td>
-<td align="right">-0.0994943</td>
-<td align="right">0.5644588</td>
-<td align="right">-0.1394393</td>
-<td align="right">0.3697497</td>
-<td align="right">-0.3189211</td>
+<td align="right">4060.333</td>
+<td align="right">3.073939</td>
+<td align="right">12507.655</td>
+<td align="right">66.46667</td>
+<td align="right">32.50303</td>
+<td align="right">12.43939</td>
+<td align="right">3.790000</td>
+<td align="right">-0.2862362</td>
+</tr>
+<tr class="even">
+<td align="left">14</td>
+<td align="right">3970.758</td>
+<td align="right">3.038182</td>
+<td align="right">12038.190</td>
+<td align="right">66.76667</td>
+<td align="right">30.71909</td>
+<td align="right">13.02121</td>
+<td align="right">3.755758</td>
+<td align="right">-0.3246390</td>
+</tr>
+<tr class="odd">
+<td align="left">13</td>
+<td align="right">4020.273</td>
+<td align="right">3.157879</td>
+<td align="right">12701.920</td>
+<td align="right">69.01212</td>
+<td align="right">32.31121</td>
+<td align="right">13.01212</td>
+<td align="right">3.919394</td>
+<td align="right">-0.3482980</td>
 </tr>
 <tr class="even">
 <td align="left">7</td>
-<td align="right">0.2369126</td>
-<td align="right">0.1643526</td>
-<td align="right">0.2723524</td>
-<td align="right">0.1748928</td>
-<td align="right">0.5341977</td>
-<td align="right">-0.1449527</td>
-<td align="right">0.7171516</td>
-<td align="right">-0.4059584</td>
+<td align="right">4154.182</td>
+<td align="right">3.143333</td>
+<td align="right">13064.612</td>
+<td align="right">69.04242</td>
+<td align="right">32.43212</td>
+<td align="right">12.41818</td>
+<td align="right">3.991515</td>
+<td align="right">-0.3890375</td>
 </tr>
 <tr class="odd">
 <td align="left">3</td>
-<td align="right">0.4260331</td>
-<td align="right">0.2018005</td>
-<td align="right">0.4293674</td>
-<td align="right">0.0754678</td>
-<td align="right">0.4696664</td>
-<td align="right">0.0732203</td>
-<td align="right">0.6988673</td>
-<td align="right">-0.4101105</td>
+<td align="right">4254.242</td>
+<td align="right">3.156667</td>
+<td align="right">13419.774</td>
+<td align="right">68.10909</td>
+<td align="right">32.28091</td>
+<td align="right">13.25758</td>
+<td align="right">3.980909</td>
+<td align="right">-0.4142106</td>
 </tr>
 <tr class="even">
 <td align="left">8</td>
-<td align="right">0.1504854</td>
-<td align="right">0.1669058</td>
-<td align="right">0.2047707</td>
-<td align="right">0.0938679</td>
-<td align="right">0.8474137</td>
-<td align="right">-0.1197486</td>
-<td align="right">0.6304317</td>
-<td align="right">-0.4835136</td>
+<td align="right">4108.455</td>
+<td align="right">3.144242</td>
+<td align="right">12911.744</td>
+<td align="right">68.28182</td>
+<td align="right">33.16606</td>
+<td align="right">12.51515</td>
+<td align="right">3.941212</td>
+<td align="right">-0.4247745</td>
 </tr>
 </tbody>
 </table>
@@ -1001,26 +1010,40 @@ results_table</code></pre>
 library(&quot;Bilinear&quot;)
 
 # # Prepare a matrix with mean of treatments per location
-# stability &lt;- matrix(data = NA, nrow = length(Treatments), ncol = length(Locations))
-# colnames(stability) &lt;- Locations
-# rownames(stability) &lt;- Treatments
-# for(i in 1:length(Treatments)){
-#    for(j in 1:length(Locations)){
-#     my.stability &lt;- subset(va_centered , germplasmName == Treatments[i] &amp; Location == Locations[j] )
-#     stability[i,j] &lt;- mean(my.stability[,4], na.rm=TRUE)
-#   }
-# }
-# 
-AMMIfit &lt;- bilinear(x = Locresults, verbose = F)
-AMMIplot(AMMIfit)
+preStability &lt;- data.matrix(va %&gt;% group_by(Location, germplasmName) %&gt;% summarise(kgHa = mean(kgHa, 
+    na.rm = TRUE), DollarKg = mean(DollarKg, na.rm = TRUE), DollarHa = mean(DollarHa, 
+    na.rm = TRUE), IQS = mean(IQS, na.rm = TRUE), Talo = mean(Talo, na.rm = TRUE), 
+    TotalSuggar = mean(TotalSuggar, na.rm = TRUE), TotalAlcaloids = mean(TotalAlcaloids, 
+        na.rm = TRUE)))
+
+Stability &lt;- preStability[, 3:9] %*% SelectionIndex
+Stability &lt;- cbind(preStability[, 2], preStability[, 1], Stability)
+colnames(Stability) &lt;- c(&quot;germplasmName&quot;, &quot;Location&quot;, &quot;Index&quot;)
+rownames(Stability) &lt;- preStability[, 2]
+
+Stability &lt;- tapply(Stability[, 3], list(Stability[, 1], Stability[, 2]), mean)
+AMMI_Index &lt;- bilinear(x = Stability, verbose = F)
+
+#Stability using a specific trait
+Trt &lt;- tapply(va$DollarKg, list(va$germplasmName, va$Location), mean)
+AMMI_Trt &lt;- bilinear(x = Trt, verbose = F)
+AMMIplot(AMMI_Trt)
+# abline(v=-0.05, col=&#39;red&#39;)
+# abline(v=+0.05, col=&#39;red&#39;)
 # AMMIplot(AMMIfit, PC=2)
-# library(&#39;agricolae&#39;)
-# model&lt;- with(Locresults,AMMI(Location, germplasmName, Replication, get(Locations[1]), console=FALSE))
-# model$ANOVA
+
+library(&quot;agricolae&quot;)
+## Exemple: mmodel&lt;- with(va,AMMI(Location, germplasmName, Replication, DollarHa, console=FALSE))
+Stability_AMMI &lt;- data.matrix(va_centered[, 4:10]) %*% SelectionIndex
+va_centered &lt;- cbind(va_centered, Stability_AMMI)
+colnames(va_centered) &lt;- c(name_cols, &quot;Index&quot;)
+
+model &lt;- with(va_centered, AMMI(Location, germplasmName, Replication, Index, console = TRUE))
+model$ANOVA
 # # see help(plot.AMMI)
 # # biplot
-# plot(model)
-# AMMI.contour(model,distance=0.3,shape=8,col=&#39;red&#39;,lwd=2,lty=5)
+plot(model)
+AMMI.contour(model, distance = 0.398, shape = 8, col = &quot;red&quot;, lwd = 2, lty = 5)
 # # triplot PC 1,2,3 
 # plot(model, type=2, number=TRUE)
 # # biplot PC1 vs Yield 
@@ -1029,23 +1052,157 @@ AMMIplot(AMMIfit)
 
 Analysis of Variance Table
  Response: y 
-     Df          SS          MS  testStat       Pvalue    
-E    10 39.68863952 3.968863952   81.4762 4.945026e-51 ***
-G    13 14.01077303 1.077751772   22.1250 6.436982e-27 ***
-PC1  22  2.29064636 0.104120289  305.0000 3.050000e-02   *
-PC2  20  1.44093913 0.072046957 1276.0000 1.276000e-01    
-PC3  18  0.92931744 0.051628747 3142.0000 3.142000e-01    
-PC4  16  0.64683184 0.040426990 3634.0000 3.634000e-01    
-PC5  14  0.41118976 0.029370697 5555.0000 5.555000e-01    
-PC6  12  0.28272427 0.023560356 5001.0000 5.001000e-01    
-PC7  10  0.17260485 0.017260485 5304.0000 5.304000e-01    
-PC8   8  0.11193755 0.013992193 2239.0000 2.239000e-01    
-PC9   6  0.03440197 0.005733662 5944.0000 5.944000e-01    
-PC10  4  0.01195921 0.002989803        NA                 
+     Df          SS          MS   testStat       Pvalue    
+E    10 346841080.9 34684108.09   38.60015 3.352979e-34 ***
+G    13 172685742.1 13283518.62   14.78331 6.282633e-20 ***
+PC1  22  52839538.1  2401797.19    0.00000      &lt; 1e-04 ***
+PC2  20  14602248.3   730112.41 9967.00000 9.967000e-01    
+PC3  18  13594573.4   755254.08 9509.00000 9.509000e-01    
+PC4  16  11398379.8   712398.74 8652.00000 8.652000e-01    
+PC5  14   9087132.5   649080.89 7380.00000 7.380000e-01    
+PC6  12   6493252.4   541104.37 7040.00000 7.040000e-01    
+PC7  10   5130129.5   513012.95 2734.00000 2.734000e-01    
+PC8   8   2843701.3   355462.66  832.00000 8.320000e-02    
+PC9   6    657253.0   109542.17 4045.00000 4.045000e-01    
+PC10  4    165103.1    41275.78         NA                 
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05
-Number of significant multiplicative terms  : 1 </code></pre>
+Number of significant multiplicative terms  : 1 
+Analysis of Variance Table
+ Response: y 
+     Df         SS          MS   testStat       Pvalue    
+E    10 8.61503463 0.861503463   32.26864 1.376723e-30 ***
+G    13 4.35352670 0.334886669   12.54358 2.043459e-17 ***
+PC1  22 1.88437793 0.085653542    0.00000      &lt; 1e-04 ***
+PC2  20 0.49336774 0.024668387 4806.00000 4.806000e-01    
+PC3  18 0.37374472 0.020763595 4373.00000 4.373000e-01    
+PC4  16 0.23304299 0.014565187 8340.00000 8.340000e-01    
+PC5  14 0.19932353 0.014237395 4875.00000 4.875000e-01    
+PC6  12 0.13221745 0.011018121 4900.00000 4.900000e-01    
+PC7  10 0.07587707 0.007587707 6728.00000 6.728000e-01    
+PC8   8 0.04475559 0.005594449 7034.00000 7.034000e-01    
+PC9   6 0.02880638 0.004801064 2620.00000 2.620000e-01    
+PC10  4 0.00520753 0.001301882         NA                 
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05
+Number of significant multiplicative terms  : 1 
+
+ANALYSIS AMMI:  Index 
+Class level information
+
+ENV:  E1 E2 E3 E4 E5 E6 E8 E10 E11 E15 E16
+GEN:  1 2 3 4 5 6 7 8 9 10 11 12 13 14
+REP:  1 2 3
+
+Number of observations:  460 
+
+model Y: Index  ~ ENV + REP%in%ENV + GEN + ENV:GEN
+Random effect REP%in%ENV
+
+Analysis of Variance Table
+
+Response: Y
+           Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+ENV        10 122.271 12.2271 18.7395 1.568e-08 ***
+REP(ENV)   22  14.354  0.6525  1.1665    0.2773    
+GEN        13  72.536  5.5797  9.9755 &lt; 2.2e-16 ***
+ENV:GEN   130 142.228  1.0941  1.9560 1.697e-06 ***
+Residuals 284 158.852  0.5593                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Coeff var   Mean Index 
+17608.63     0.004247284 
+
+Analysis
+     percent  acum Df    Sum.Sq  Mean.Sq F.value   Pr.F
+PC1     42.3  42.3 22 60.147939 2.733997    4.89 0.0000
+PC2     18.5  60.8 20 26.328474 1.316424    2.35 0.0012
+PC3     14.9  75.7 18 21.148760 1.174931    2.10 0.0061
+PC4      8.6  84.2 16 12.180547 0.761284    1.36 0.1609
+PC5      5.8  90.0 14  8.232009 0.588001    1.05 0.4037
+PC6      4.1  94.2 12  5.859328 0.488277    0.87 0.5781
+PC7      3.7  97.9 10  5.311448 0.531145    0.95 0.4877
+PC8      1.4  99.3  8  1.986085 0.248261    0.44 0.8964
+PC9      0.6  99.9  6  0.854278 0.142380    0.25 0.9591
+PC10     0.1 100.0  4  0.165209 0.041302    0.07 0.9910
+Analysis of Variance Table
+
+Response: Y
+           Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+ENV        10 122.271 12.2271 18.7395 1.568e-08 ***
+REP(ENV)   22  14.354  0.6525  1.1665    0.2773    
+GEN        13  72.536  5.5797  9.9755 &lt; 2.2e-16 ***
+ENV:GEN   130 142.228  1.0941  1.9560 1.697e-06 ***
+Residuals 284 158.852  0.5593                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Limit, radio: 0.5535593
+Genotype  in: 7
+Genotype out: 7 
+
+$`GENOTYPE IN`
+[1] &quot;1&quot;  &quot;11&quot; &quot;13&quot; &quot;3&quot;  &quot;4&quot;  &quot;5&quot;  &quot;7&quot; 
+
+$`GENOTYPE OUT`
+[1] &quot;10&quot; &quot;12&quot; &quot;14&quot; &quot;2&quot;  &quot;6&quot;  &quot;8&quot;  &quot;9&quot; 
+
+$Distance
+     distance
+1  0.13001093
+10 1.19777180
+11 0.35730955
+12 1.39085250
+13 0.23691562
+14 0.64931204
+2  0.60670857
+3  0.49362653
+4  0.03788082
+5  0.48967732
+6  0.64500299
+7  0.16301523
+8  0.91708731
+9  1.14544084</code></pre>
 <p><img src="figure/analiseConjuntaVA.Rmd/stability-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-stability-1">
+Past versions of stability-1.png
+</button>
+</p>
+<div id="fig-stability-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/chris263/AnaliseR/blob/10df00dce11a978fc0283a884dc0058fefe97bb5/docs/figure/analiseConjuntaVA.Rmd/stability-1.png" target="_blank">10df00d</a>
+</td>
+<td>
+chris263
+</td>
+<td>
+2021-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/analiseConjuntaVA.Rmd/stability-2.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
 <br>
 <p>
@@ -1070,23 +1227,27 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] Bilinear_0.2.2  emmeans_1.5.5-1 lme4_1.1-26     Matrix_1.3-2   
-[5] workflowr_1.6.2
+[1] agricolae_1.3-3 Bilinear_0.2.2  tidyr_1.1.2     dplyr_1.0.2    
+[5] emmeans_1.5.5-1 lme4_1.1-26     Matrix_1.3-2   
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.6       highr_0.8        nloptr_1.2.2.2   pillar_1.4.7    
- [5] compiler_4.0.3   later_1.1.0.1    formatR_1.7      git2r_0.28.0    
- [9] tools_4.0.3      boot_1.3-25      statmod_1.4.35   digest_0.6.27   
-[13] nlme_3.1-151     evaluate_0.14    lifecycle_0.2.0  tibble_3.0.4    
-[17] lattice_0.20-41  pkgconfig_2.0.3  rlang_0.4.10     rstudioapi_0.13 
-[21] yaml_2.2.1       mvtnorm_1.1-1    xfun_0.20        coda_0.19-4     
-[25] stringr_1.4.0    knitr_1.30       fs_1.5.0         vctrs_0.3.6     
-[29] hms_0.5.3        rprojroot_2.0.2  grid_4.0.3       glue_1.4.2      
-[33] here_1.0.1       R6_2.5.0         rmarkdown_2.6    minqa_1.2.4     
-[37] readr_1.4.0      magrittr_2.0.1   whisker_0.4      MASS_7.3-53     
-[41] promises_1.1.1   ellipsis_0.3.1   htmltools_0.5.1  splines_4.0.3   
-[45] xtable_1.8-4     httpuv_1.5.4     estimability_1.3 stringi_1.5.3   
-[49] crayon_1.3.4    </code></pre>
+ [1] statmod_1.4.35   tidyselect_1.1.0 xfun_0.20        purrr_0.3.4     
+ [5] haven_2.3.1      splines_4.0.3    lattice_0.20-41  labelled_2.7.0  
+ [9] vctrs_0.3.6      generics_0.1.0   miniUI_0.1.1.1   htmltools_0.5.1 
+[13] yaml_2.2.1       AlgDesign_1.2.0  rlang_0.4.10     later_1.1.0.1   
+[17] pillar_1.4.7     nloptr_1.2.2.2   glue_1.4.2       questionr_0.7.4 
+[21] lifecycle_0.2.0  stringr_1.4.0    combinat_0.0-8   workflowr_1.6.2 
+[25] mvtnorm_1.1-1    coda_0.19-4      evaluate_0.14    forcats_0.5.0   
+[29] knitr_1.30       fastmap_1.0.1    httpuv_1.5.4     highr_0.8       
+[33] Rcpp_1.0.6       xtable_1.8-4     readr_1.4.0      promises_1.1.1  
+[37] formatR_1.7      mime_0.9         fs_1.5.0         klaR_0.6-15     
+[41] hms_0.5.3        digest_0.6.27    stringi_1.5.3    shiny_1.5.0     
+[45] grid_4.0.3       rprojroot_2.0.2  here_1.0.1       tools_4.0.3     
+[49] magrittr_2.0.1   tibble_3.0.4     cluster_2.1.0    crayon_1.3.4    
+[53] whisker_0.4      pkgconfig_2.0.3  ellipsis_0.3.1   MASS_7.3-53     
+[57] estimability_1.3 minqa_1.2.4      rmarkdown_2.6    rstudioapi_0.13 
+[61] R6_2.5.0         boot_1.3-25      nlme_3.1-151     git2r_0.28.0    
+[65] compiler_4.0.3  </code></pre>
 </div>
 </div>
 

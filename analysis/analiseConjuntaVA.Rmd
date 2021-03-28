@@ -50,8 +50,8 @@ addToREADME(paste("The random seed is", random_seed))
 
 ```{r import data, echo=TRUE}
 va <- read.csv("data/A427_converted.csv", sep=",", header=T)
-
-colnames(va) <- c("germplasmName","Replication","Location","kgHa","DollarKg","DollarHa","IQS","Talo","TotalSugar","TotalAlcaloids")
+name_cols <- c("germplasmName","Replication","Location","kgHa","DollarKg","DollarHa","IQS","Talo","TotalSuggar","TotalAlcaloids")
+colnames(va) <- name_cols
 
 Traits <- colnames(va)[4:length(va)]
 nTraits <- ncol(va)-3
@@ -59,7 +59,7 @@ Treatments <- unique(va$germplasmName)
 Locations <- unique(va$Location)
 
 #This is the economic value for each trait
-ecoValue <- c(1.1,1.1,1.60,1.1,-1.05,1.1,-1.05)
+econValue <- c(1.5,1.01,1.45,1.55,-1.25,-1.1,-1.16)
 
 
 pre_result <- matrix(data=NA, nrow = nTraits, ncol = 3)
@@ -109,9 +109,6 @@ Calculating regression coefficients
 
 ```{r pre process, echo = TRUE}
 
-
-
-
 ##regression coefficient - if necessary
 # rP <- c()
 # count=1
@@ -146,62 +143,71 @@ for (i in 1:nTraits){
   PhenoMatrix[i,i] <- pre_result[i,3]
 }
 
-InvPhenoMatrix <- solve(PhenoMatrix) #solve is a command to calculate the inverted matrix
 
 # 2 Genotypic matrix
-GenoMatrix <- matrix(pre_result[,2])
+GenoMatrix <- diag(c(pre_result[,2]))
+
 
 # 3 Economic value
-# Already defined as ecoValue
+# Already defined as econValue
 
-# Calculate the Index
-SelectionIndex <- InvPhenoMatrix %*% GenoMatrix
-
-# Multiplying the economic value
-for (i in 1:nTraits) {
-  SelectionIndex[i,1] <- SelectionIndex[i,1]*ecoValue[i]
-}
-
+# Calculate the Index. It is a matrix with 1 column and nTraits rows
+SelectionIndex <- solve(PhenoMatrix) %*% GenoMatrix %*% econValue
 rownames(SelectionIndex) <- Traits
 colnames(SelectionIndex) <- "Index"
 
+print(SelectionIndex)
+
+```
+
+
+## Making Selection with Index
+
+Here I'm using the index to multiply by each trait. After that it will be possible make a rank.
+
+```{r making selection, echo=TRUE}
+library(dplyr)
+library(tidyr)
 
 #Calculate the index per germplasmName
-preresults <- matrix(data = NA, nrow = length(Treatments), ncol = length(Traits))
+preresults <- va_centered %>% group_by(germplasmName) %>% summarise(kgHa = mean(kgHa, na.rm=TRUE),
+                                                                   DollarKg = mean(DollarKg, na.rm=TRUE),
+                                                                   DollarHa = mean(DollarHa, na.rm=TRUE),
+                                                                   IQS = mean(IQS, na.rm=TRUE),
+                                                                   Talo = mean(Talo, na.rm=TRUE),
+                                                                   TotalSuggar = mean(TotalSuggar, na.rm=TRUE),
+                                                                   TotalAlcaloids = mean(TotalAlcaloids, na.rm=TRUE)
+                                                                   )
+
+#Removing extra column with germplasmName
+preresults <- data.matrix(subset(preresults, select= -c(germplasmName)))
+
+#Naming rows and cols
 colnames(preresults) <- Traits
 rownames(preresults) <- Treatments
-for(i in 1:length(Treatments)){
-  my.data.frame <- subset(va_centered , germplasmName == Treatments[i] )
-  for(j in 1:nTraits){
-    preresults[i,j] <- mean(my.data.frame[,j+3], na.rm=TRUE) 
-  }
-}
 
+#Index Matrix has 1 column and the number of rows is the number of germplasmName
 index_matrix <- preresults %*% SelectionIndex
 
-# print(index_matrix)
-results<-as.data.frame(cbind(preresults, index_matrix))
-# print(SelectionIndex)
+# Creating a matrix with real average (not centered)
+preresults2 <- va %>% group_by(germplasmName) %>% summarise(kgHa = mean(kgHa, na.rm=TRUE),
+                                                                   DollarKg = mean(DollarKg, na.rm=TRUE),
+                                                                   DollarHa = mean(DollarHa, na.rm=TRUE),
+                                                                   IQS = mean(IQS, na.rm=TRUE),
+                                                                   Talo = mean(Talo, na.rm=TRUE),
+                                                                   TotalSuggar = mean(TotalSuggar, na.rm=TRUE),
+                                                                   TotalAlcaloids = mean(TotalAlcaloids, na.rm=TRUE)
+                                                                   )
+
+preresults2 <- data.matrix(subset(preresults2, select= -c(germplasmName)))
+ 
+#print(index_matrix)
+# Result matrix has all traits + selection index
+results<-as.data.frame(cbind(preresults2, index_matrix))
 results <-results[order(results$Index, decreasing = TRUE),]
 
+#Print the result with Rmarkdown 
 results_table <- knitr::kable(results)
-
-#Calculate the index per germplasmName and Location
-Locresults <- matrix(data = 0, nrow = length(Treatments), ncol = length(Locations))
-colnames(Locresults) <- Locations
-rownames(Locresults) <- Treatments
-for(i in 1:length(Treatments)){
-  for(j in 1:length(Locations)){
-    loc.data.frame <- subset(va_centered , germplasmName == Treatments[i] & Location == Locations[j] )
-    for(k in 1:length(Traits)){
-      value <- mean(loc.data.frame[,k+3], na.rm=TRUE) * SelectionIndex[k,1]
-      Locresults[i,j] <- Locresults[i,j] + value
-    }
-    
-  }
-  
-}
-
 results_table
 
 ```
@@ -214,26 +220,43 @@ This is using Bilinear sowftware
 library("Bilinear")
 
 # # Prepare a matrix with mean of treatments per location
-# stability <- matrix(data = NA, nrow = length(Treatments), ncol = length(Locations))
-# colnames(stability) <- Locations
-# rownames(stability) <- Treatments
-# for(i in 1:length(Treatments)){
-#    for(j in 1:length(Locations)){
-#     my.stability <- subset(va_centered , germplasmName == Treatments[i] & Location == Locations[j] )
-#     stability[i,j] <- mean(my.stability[,4], na.rm=TRUE)
-#   }
-# }
-# 
-AMMIfit <- bilinear(x = Locresults, verbose=F)
-AMMIplot(AMMIfit)
+preStability <- data.matrix(va %>% group_by(Location, germplasmName) %>% summarise(kgHa = mean(kgHa, na.rm=TRUE),
+                                                                   DollarKg = mean(DollarKg, na.rm=TRUE),
+                                                                   DollarHa = mean(DollarHa, na.rm=TRUE),
+                                                                   IQS = mean(IQS, na.rm=TRUE),
+                                                                   Talo = mean(Talo, na.rm=TRUE),
+                                                                   TotalSuggar = mean(TotalSuggar, na.rm=TRUE),
+                                                                   TotalAlcaloids = mean(TotalAlcaloids, na.rm=TRUE)
+                                                                   ))
+
+Stability <- preStability[,3:9] %*% SelectionIndex
+Stability <- cbind(preStability[,2], preStability[,1], Stability)
+colnames(Stability) <- c("germplasmName","Location", "Index")
+rownames(Stability) <- preStability[,2]
+
+Stability <- tapply(Stability[,3], list (Stability[,1], Stability[,2]), mean)
+AMMI_Index <- bilinear(x = Stability , verbose=F)
+
+#Stability using a specific trait
+Trt <- tapply(va$DollarKg, list (va$germplasmName, va$Location), mean)
+AMMI_Trt <- bilinear(x = Trt , verbose=F)
+AMMIplot(AMMI_Trt)
+# abline(v=-0.05, col="red")
+# abline(v=+0.05, col="red")
 # AMMIplot(AMMIfit, PC=2)
-# library("agricolae")
-# model<- with(Locresults,AMMI(Location, germplasmName, Replication, get(Locations[1]), console=FALSE))
-# model$ANOVA
+
+library("agricolae")
+## Exemple: mmodel<- with(va,AMMI(Location, germplasmName, Replication, DollarHa, console=FALSE))
+Stability_AMMI <- data.matrix(va_centered[,4:10]) %*% SelectionIndex
+va_centered <- cbind(va_centered, Stability_AMMI)
+colnames(va_centered) <- c(name_cols,"Index")
+
+model<- with(va_centered,AMMI(Location, germplasmName, Replication, Index, console=TRUE))
+model$ANOVA
 # # see help(plot.AMMI)
 # # biplot
-# plot(model)
-# AMMI.contour(model,distance=0.3,shape=8,col="red",lwd=2,lty=5)
+plot(model)
+AMMI.contour(model,distance=0.398,shape=8,col="red",lwd=2,lty=5)
 # # triplot PC 1,2,3 
 # plot(model, type=2, number=TRUE)
 # # biplot PC1 vs Yield 
