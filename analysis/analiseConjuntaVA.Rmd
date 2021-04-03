@@ -32,8 +32,9 @@ for (package in packages_used){
 }#END packages_used
 
 here::i_am("analysis/analiseConjuntaVA.Rmd")
-
 source(here::here("code/addToREADME.R"))
+source(here::here("code/SpatialCorrection.R"))
+
 
 addToREADME(paste0("## ", rmarkdown::metadata$title), append=F)
 addToREADME(c(date(), ""))
@@ -46,6 +47,7 @@ addToREADME("")
 random_seed <- 835246
 set.seed(random_seed)
 addToREADME(paste("The random seed is", random_seed))
+
 ```
 
 ```{r import data, echo=TRUE}
@@ -59,15 +61,12 @@ Treatments <- unique(va$germplasmName)
 Locations <- unique(va$Location)
 
 #This is the economic value for each trait
-econValue <- c(1.5,1.01,1.45,1.55,-1.25,-1.1,-1.16)
+econValue <- c(1.2,1.2,1.5,1.6,-1.2,-1.1,-1.2)
+
+#Select Method of spatial correction (RowCol or SPDE)
+method = "RowCol" 
 
 
-pre_result <- matrix(data=NA, nrow = nTraits, ncol = 3)
-colnames(pre_result)<- c("h2", "varG", "varP")
-rownames(pre_result)<-Traits
-
-library("lme4")
-library("emmeans")
 
 #Centering the data - Function scale sets mean = 0 
 #It is important to scale the data in order to get a sum of different traits afterwards
@@ -77,28 +76,99 @@ for(i in 1:nTraits){
   va_centered[,3+i] <- scale(va[,i+3], scale = TRUE)
 }
 
-for (i in 4:length(va_centered)){
+
+
+for( i in 1:length(Locations)){
+  if(i ==1){
+    inputSPDE <- prepare_data(va_centered, Traits, Treatments, Locations[i], method)
+  }else{
+    inputSPDE <- rbind(inputSPDE,prepare_data(va_centered, Traits, Treatments, Locations[i], method))
+  }
+}
+
+for( i in 1:length(Locations)){
+  if(i==1){
+    correctedValues <-spatial_correction(inputSPDE, Treatments, Traits,  Locations[i], method)
+  }else{
+    correctedValues <- rbind(correctedValues, spatial_correction(inputSPDE, Treatments, Traits, Locations[i], method))
+  }
+}
+
+name_cols <- append(name_cols, c("colNumber","rowNumber","plot"), after = 2)
+colnames(correctedValues) <- name_cols
+
+# head(correctedValues)
+```
+## Mixed Model
+Here I am calculating heritability per location and also joint heritability.
+
+```{r mixed model, echo=TRUE}
+
+loc_result <- matrix(data=0, nrow = length(Locations) , ncol = nTraits)
+colnames(loc_result)<- Traits
+rownames(loc_result)<- Locations
+
+library("lme4")
+library("emmeans")
+
+for( i in 1:length(Locations)){
+  location <- Locations[i]
+  Dat_Loc = correctedValues %>%filter(Location == UQ(location))
   
-  Pheno <- colnames(va_centered)[i]
-  model <- lmer( get(Pheno) ~ (1|germplasmName) + (1|Replication) +(1|Location) + (1|germplasmName:Location),
-                 na.action = na.exclude,
-                 data=va_centered)
+  for (j in 7:length(Dat_Loc)){
+  
+    Pheno <- colnames(Dat_Loc)[j]
+    #I'm modeling replication (block) as fixed effect, because in individual values per rep.
+    model <- lmer( get(Pheno) ~ (1|germplasmName) + (1|Replication),
+                   na.action = na.exclude, data=Dat_Loc)
+    
+    
+    variance = as.data.frame(VarCorr(model))
+    gvar <- variance[1,"vcov"]
+    repvar <- variance[2, "vcov"]
+    resvar <- variance [3, "vcov"]
+    addCor <- variance[1,"sdcor"]
+    phenovar <- gvar + resvar  + repvar
+    H2 = gvar/phenovar
+    loc_result[i,j-6] <- H2
+    
+  }
+}
+
+
+pre_result <- matrix(data=NA, nrow = nTraits, ncol = 3)
+colnames(pre_result)<- c("h2", "varG", "varP")
+rownames(pre_result)<-Traits
+
+
+for (i in 7:length(correctedValues)){
+  
+  Pheno <- colnames(correctedValues)[i]
+  #I'm modeling replication (block) as fixed effect, because in individual values per rep.
+  model <- lmer( get(Pheno) ~ (1|germplasmName) + Replication + (1|Location) + (1|germplasmName:Location),
+                 na.action = na.exclude, data=correctedValues)
+  
   
   variance = as.data.frame(VarCorr(model))
   gvar <- variance[2,"vcov"]
   envar <- variance[3, "vcov"]
-  resvar <- variance [5, "vcov"]
+  resvar <- variance [4, "vcov"]
   addCor <- variance[2,"sdcor"]
-  phenovar <- gvar + envar + resvar
+  phenovar <- gvar + resvar  + envar
   H2 = gvar/phenovar
-  pre_result[i-3,1] <- H2
-  pre_result[i-3,2] <- gvar
-  pre_result[i-3,3] <- phenovar
+  pre_result[i-6,1] <- H2
+  pre_result[i-6,2] <- gvar
+  pre_result[i-6,3] <- phenovar
   
 }
 
+
+loc_results_table <- knitr::kable(loc_result)
+loc_results_table
+
 preresults_table <- knitr::kable(pre_result)
 preresults_table
+
 
 ```
 
@@ -109,32 +179,16 @@ Calculating regression coefficients
 
 ```{r pre process, echo = TRUE}
 
-##regression coefficient - if necessary
-# rP <- c()
-# count=1
-# for(i in 1:nTraits){
-#   t1 <- as.numeric(va[,i+3])
-#   var1 <- pre_result[i,3]
-#   if(i < nTraits){
-#     for (j in (i+1):nTraits){
-#       t2 <- as.numeric(va[,j+3])
-#       var2 <- pre_result[j,3]
-#       cal_rP <- var(t1,t2, na.rm = TRUE)/sqrt(var1*var2)
-#       rP[count] <- cal_rP
-#       count=count+1
-#     }
-#   }
-# }
-
 # 1 Phenotypic matrix
-#The of diagonal is defined by the covariation between the traits.
+# The of diagonal is defined by the covariation between the traits.
 # cov(1,2) = rP x sqrt(varPheno[1] x varPheno[2])
-PhenoMatrix <- matrix(data = NA, ncol = nTraits, nrow = nTraits)
+
+PhenoMatrix <- matrix(data = 0, ncol = nTraits, nrow = nTraits)
 for (i in 1:nTraits){
-  t1 <- as.numeric(va_centered[,i+3])
+  t1 <- as.numeric(correctedValues[,i+6])
   if (i < nTraits){
     for (j in (i+1):nTraits){
-      t2 <- as.numeric(va_centered[,j+3])
+      t2 <- as.numeric(correctedValues[,j+6])
       offDiagonal <- var(t1,t2, na.rm = TRUE)
       PhenoMatrix[i,j] <- offDiagonal
       PhenoMatrix[j,i] <- offDiagonal
@@ -156,7 +210,7 @@ SelectionIndex <- solve(PhenoMatrix) %*% GenoMatrix %*% econValue
 rownames(SelectionIndex) <- Traits
 colnames(SelectionIndex) <- "Index"
 
-print(SelectionIndex)
+# print(SelectionIndex)
 
 ```
 
@@ -166,18 +220,19 @@ print(SelectionIndex)
 Here I'm using the index to multiply by each trait. After that it will be possible make a rank.
 
 ```{r making selection, echo=TRUE}
+
 library(dplyr)
 library(tidyr)
-
+#
 #Calculate the index per germplasmName
-preresults <- va_centered %>% group_by(germplasmName) %>% summarise(kgHa = mean(kgHa, na.rm=TRUE),
-                                                                   DollarKg = mean(DollarKg, na.rm=TRUE),
-                                                                   DollarHa = mean(DollarHa, na.rm=TRUE),
-                                                                   IQS = mean(IQS, na.rm=TRUE),
-                                                                   Talo = mean(Talo, na.rm=TRUE),
-                                                                   TotalSuggar = mean(TotalSuggar, na.rm=TRUE),
-                                                                   TotalAlcaloids = mean(TotalAlcaloids, na.rm=TRUE)
-                                                                   )
+preresults <- correctedValues %>% group_by(germplasmName) %>% summarise(kgHa = mean(kgHa, na.rm=TRUE),
+                                                                    DollarKg = mean(DollarKg, na.rm=TRUE),
+                                                                    DollarHa = mean(DollarHa, na.rm=TRUE),
+                                                                    IQS = mean(IQS, na.rm=TRUE),
+                                                                    Talo = mean(Talo, na.rm=TRUE),
+                                                                    TotalSuggar = mean(TotalSuggar, na.rm=TRUE),
+                                                                    TotalAlcaloids = mean(TotalAlcaloids, na.rm=TRUE)
+                                                                    )
 
 #Removing extra column with germplasmName
 preresults <- data.matrix(subset(preresults, select= -c(germplasmName)))
@@ -191,21 +246,22 @@ index_matrix <- preresults %*% SelectionIndex
 
 # Creating a matrix with real average (not centered)
 preresults2 <- va %>% group_by(germplasmName) %>% summarise(kgHa = mean(kgHa, na.rm=TRUE),
-                                                                   DollarKg = mean(DollarKg, na.rm=TRUE),
-                                                                   DollarHa = mean(DollarHa, na.rm=TRUE),
-                                                                   IQS = mean(IQS, na.rm=TRUE),
-                                                                   Talo = mean(Talo, na.rm=TRUE),
-                                                                   TotalSuggar = mean(TotalSuggar, na.rm=TRUE),
-                                                                   TotalAlcaloids = mean(TotalAlcaloids, na.rm=TRUE)
-                                                                   )
-
+                                                                    DollarKg = mean(DollarKg, na.rm=TRUE),
+                                                                    DollarHa = mean(DollarHa, na.rm=TRUE),
+                                                                    IQS = mean(IQS, na.rm=TRUE),
+                                                                    Talo = mean(Talo, na.rm=TRUE),
+                                                                    TotalSuggar = mean(TotalSuggar, na.rm=TRUE),
+                                                                    TotalAlcaloids = mean(TotalAlcaloids, na.rm=TRUE)
+                                                                    )
+#
 preresults2 <- data.matrix(subset(preresults2, select= -c(germplasmName)))
- 
-#print(index_matrix)
+
+#
+# print(index_matrix)
 # Result matrix has all traits + selection index
 results<-as.data.frame(cbind(preresults2, index_matrix))
 results <-results[order(results$Index, decreasing = TRUE),]
-
+# 
 #Print the result with Rmarkdown 
 results_table <- knitr::kable(results)
 results_table
@@ -219,26 +275,27 @@ This is using Bilinear sowftware
 
 library("Bilinear")
 
-# # Prepare a matrix with mean of treatments per location
-preStability <- data.matrix(va %>% group_by(Location, germplasmName) %>% summarise(kgHa = mean(kgHa, na.rm=TRUE),
-                                                                   DollarKg = mean(DollarKg, na.rm=TRUE),
-                                                                   DollarHa = mean(DollarHa, na.rm=TRUE),
-                                                                   IQS = mean(IQS, na.rm=TRUE),
-                                                                   Talo = mean(Talo, na.rm=TRUE),
-                                                                   TotalSuggar = mean(TotalSuggar, na.rm=TRUE),
-                                                                   TotalAlcaloids = mean(TotalAlcaloids, na.rm=TRUE)
-                                                                   ))
-
+# Prepare a matrix with mean of treatments per location
+preStability <- data.matrix(correctedValues %>% group_by(Location, germplasmName) %>% summarise(kgHa = mean(kgHa, na.rm=TRUE),
+                                                                    DollarKg = mean(DollarKg, na.rm=TRUE),
+                                                                    DollarHa = mean(DollarHa, na.rm=TRUE),
+                                                                    IQS = mean(IQS, na.rm=TRUE),
+                                                                    Talo = mean(Talo, na.rm=TRUE),
+                                                                    TotalSuggar = mean(TotalSuggar, na.rm=TRUE),
+                                                                    TotalAlcaloids = mean(TotalAlcaloids, na.rm=TRUE)
+                                                                    ))
+ 
 Stability <- preStability[,3:9] %*% SelectionIndex
 Stability <- cbind(preStability[,2], preStability[,1], Stability)
 colnames(Stability) <- c("germplasmName","Location", "Index")
 rownames(Stability) <- preStability[,2]
-
+# 
 Stability <- tapply(Stability[,3], list (Stability[,1], Stability[,2]), mean)
 AMMI_Index <- bilinear(x = Stability , verbose=F)
+AMMIplot(AMMI_Index)
 
 #Stability using a specific trait
-Trt <- tapply(va$DollarKg, list (va$germplasmName, va$Location), mean)
+Trt <- tapply(correctedValues$kgHa, list (correctedValues$germplasmName, correctedValues$Location), mean)
 AMMI_Trt <- bilinear(x = Trt , verbose=F)
 AMMIplot(AMMI_Trt)
 # abline(v=-0.05, col="red")
@@ -246,22 +303,23 @@ AMMIplot(AMMI_Trt)
 # AMMIplot(AMMIfit, PC=2)
 
 library("agricolae")
-## Exemple: mmodel<- with(va,AMMI(Location, germplasmName, Replication, DollarHa, console=FALSE))
-Stability_AMMI <- data.matrix(va_centered[,4:10]) %*% SelectionIndex
-va_centered <- cbind(va_centered, Stability_AMMI)
-colnames(va_centered) <- c(name_cols,"Index")
+# ## Exemple: mmodel<- with(va,AMMI(Location, germplasmName, Replication, DollarHa, console=FALSE))
+name_cols <- colnames(correctedValues)
+Stability_AMMI <- data.matrix(correctedValues[,7:length(correctedValues)]) %*% SelectionIndex
+correctedValues<- cbind(correctedValues, Stability_AMMI)
+colnames(correctedValues) <- c(name_cols,"Index")
 
-model<- with(va_centered,AMMI(Location, germplasmName, Replication, Index, console=TRUE))
-model$ANOVA
-# # see help(plot.AMMI)
-# # biplot
+model<- with(correctedValues,AMMI(Location, germplasmName, Replication, Index, console=TRUE))
+# model$ANOVA
+# see help(plot.AMMI)
+# biplot
 plot(model)
-AMMI.contour(model,distance=0.398,shape=8,col="red",lwd=2,lty=5)
-# # triplot PC 1,2,3 
+AMMI.contour(model,distance=0.18,shape=8,col="red",lwd=2,lty=5)
+# triplot PC 1,2,3 
 # plot(model, type=2, number=TRUE)
-# # biplot PC1 vs Yield 
+# biplot PC1 vs Yield 
 # plot(model, first=0,second=1, number=TRUE)
-# # Example 2
+# Example 2
 
 
 ```
