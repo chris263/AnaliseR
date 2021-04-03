@@ -516,16 +516,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomchris263AnaliseRtreee7f02819557a14a0d72971ed043b6088ed96d5a6targetblanke7f0281a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/chris263/AnaliseR/tree/e7f02819557a14a0d72971ed043b6088ed96d5a6" target="_blank">e7f0281</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomchris263AnaliseRtree668e4609c6218e1d96e3f1ccd3fe1468c72e9c0etargetblank668e460a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/chris263/AnaliseR/tree/668e4609c6218e1d96e3f1ccd3fe1468c72e9c0e" target="_blank">668e460</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomchris263AnaliseRtreee7f02819557a14a0d72971ed043b6088ed96d5a6targetblanke7f0281a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomchris263AnaliseRtree668e4609c6218e1d96e3f1ccd3fe1468c72e9c0etargetblank668e460a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/chris263/AnaliseR/tree/e7f02819557a14a0d72971ed043b6088ed96d5a6" target="_blank">e7f0281</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/chris263/AnaliseR/tree/668e4609c6218e1d96e3f1ccd3fe1468c72e9c0e" target="_blank">668e460</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -536,14 +536,8 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
 
-Untracked files:
-    Untracked:  code/SpatialCorrection.R
-    Untracked:  data/gregorio.jpeg
-    Untracked:  data/~$Weight_EconValue.xlsx
-
 Unstaged changes:
     Modified:   analysis/analiseConjuntaVA.Rmd
-    Modified:   data/A427_converted.csv
 
 </code></pre>
 <p>
@@ -582,6 +576,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/chris263/AnaliseR/blob/668e4609c6218e1d96e3f1ccd3fe1468c72e9c0e/analysis/analiseConjuntaVA.Rmd" target="_blank">668e460</a>
+</td>
+<td>
+chris263
+</td>
+<td>
+2021-04-03
+</td>
+<td>
+adding spatial correction
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/chris263/AnaliseR/668e4609c6218e1d96e3f1ccd3fe1468c72e9c0e/docs/analiseConjuntaVA.html" target="_blank">668e460</a>
+</td>
+<td>
+chris263
+</td>
+<td>
+2021-04-03
+</td>
+<td>
+adding spatial correction
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -679,7 +707,7 @@ Locations &lt;- unique(va$Location)
 #This is the economic value for each trait
 econValue &lt;- c(1.2, 1.2, 1.5, 1.6, -1.2, -1.1, -1.2)
 
-#Select Method of spatial correction (RowCol or SPDE)
+#Select Method of spatial correction (No, RowCol, SPDE)
 method = &quot;RowCol&quot;
 
 
@@ -693,7 +721,6 @@ for (i in 1:nTraits) {
 }
 
 
-
 for (i in 1:length(Locations)) {
     if (i == 1) {
         inputSPDE &lt;- prepare_data(va_centered, Traits, Treatments, Locations[i], 
@@ -704,15 +731,21 @@ for (i in 1:length(Locations)) {
     }
 }
 
-for (i in 1:length(Locations)) {
-    if (i == 1) {
-        correctedValues &lt;- spatial_correction(inputSPDE, Treatments, Traits, Locations[i], 
-            method)
-    } else {
-        correctedValues &lt;- rbind(correctedValues, spatial_correction(inputSPDE, Treatments, 
-            Traits, Locations[i], method))
+if (method == &quot;No&quot;) {
+    correctedValues = subset(inputSPDE, select = -c(intercept))
+} else {
+    for (i in 1:length(Locations)) {
+        if (i == 1) {
+            correctedValues &lt;- spatial_correction(inputSPDE, Treatments, Traits, 
+                Locations[i], method)
+        } else {
+            correctedValues &lt;- rbind(correctedValues, spatial_correction(inputSPDE, 
+                Treatments, Traits, Locations[i], method))
+        }
     }
 }
+
+
 
 name_cols &lt;- append(name_cols, c(&quot;colNumber&quot;, &quot;rowNumber&quot;, &quot;plot&quot;), after = 2)
 colnames(correctedValues) &lt;- name_cols
@@ -1244,13 +1277,13 @@ rownames(Stability) &lt;- preStability[, 2]
 # 
 Stability &lt;- tapply(Stability[, 3], list(Stability[, 1], Stability[, 2]), mean)
 AMMI_Index &lt;- bilinear(x = Stability, verbose = F)
-AMMIplot(AMMI_Index)
+# AMMIplot(AMMI_Index)
 
 #Stability using a specific trait
 Trt &lt;- tapply(correctedValues$kgHa, list(correctedValues$germplasmName, correctedValues$Location), 
     mean)
 AMMI_Trt &lt;- bilinear(x = Trt, verbose = F)
-AMMIplot(AMMI_Trt)
+# AMMIplot(AMMI_Trt)
 # abline(v=-0.05, col=&#39;red&#39;)
 # abline(v=+0.05, col=&#39;red&#39;)
 # AMMIplot(AMMIfit, PC=2)
@@ -1403,6 +1436,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/chris263/AnaliseR/blob/668e4609c6218e1d96e3f1ccd3fe1468c72e9c0e/docs/figure/analiseConjuntaVA.Rmd/stability-1.png" target="_blank">668e460</a>
+</td>
+<td>
+chris263
+</td>
+<td>
+2021-04-03
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/chris263/AnaliseR/blob/467e09aa45b5a67a9e4b7884cf343941507b6c59/docs/figure/analiseConjuntaVA.Rmd/stability-1.png" target="_blank">467e09a</a>
 </td>
 <td>
@@ -1427,45 +1471,6 @@ chris263
 </table>
 </div>
 </div>
-<p><img src="figure/analiseConjuntaVA.Rmd/stability-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-stability-2">
-Past versions of stability-2.png
-</button>
-</p>
-<div id="fig-stability-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/chris263/AnaliseR/blob/467e09aa45b5a67a9e4b7884cf343941507b6c59/docs/figure/analiseConjuntaVA.Rmd/stability-2.png" target="_blank">467e09a</a>
-</td>
-<td>
-chris263
-</td>
-<td>
-2021-03-28
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/analiseConjuntaVA.Rmd/stability-3.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
 <br>
 <p>

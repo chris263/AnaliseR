@@ -63,7 +63,7 @@ Locations <- unique(va$Location)
 #This is the economic value for each trait
 econValue <- c(1.2,1.2,1.5,1.6,-1.2,-1.1,-1.2)
 
-#Select Method of spatial correction (RowCol or SPDE)
+#Select Method of spatial correction (No, RowCol, SPDE)
 method = "RowCol" 
 
 
@@ -77,7 +77,6 @@ for(i in 1:nTraits){
 }
 
 
-
 for( i in 1:length(Locations)){
   if(i ==1){
     inputSPDE <- prepare_data(va_centered, Traits, Treatments, Locations[i], method)
@@ -86,13 +85,19 @@ for( i in 1:length(Locations)){
   }
 }
 
-for( i in 1:length(Locations)){
-  if(i==1){
-    correctedValues <-spatial_correction(inputSPDE, Treatments, Traits,  Locations[i], method)
-  }else{
-    correctedValues <- rbind(correctedValues, spatial_correction(inputSPDE, Treatments, Traits, Locations[i], method))
+if(method == "No"){
+  correctedValues = subset(inputSPDE, select=-c(intercept))
+}else{
+  for( i in 1:length(Locations)){
+      if(i==1){
+        correctedValues <-spatial_correction(inputSPDE, Treatments, Traits,  Locations[i], method)
+      }else{
+        correctedValues <- rbind(correctedValues, spatial_correction(inputSPDE, Treatments, Traits, Locations[i], method))
+      }
   }
 }
+
+
 
 name_cols <- append(name_cols, c("colNumber","rowNumber","plot"), after = 2)
 colnames(correctedValues) <- name_cols
@@ -292,12 +297,12 @@ rownames(Stability) <- preStability[,2]
 # 
 Stability <- tapply(Stability[,3], list (Stability[,1], Stability[,2]), mean)
 AMMI_Index <- bilinear(x = Stability , verbose=F)
-AMMIplot(AMMI_Index)
+# AMMIplot(AMMI_Index)
 
 #Stability using a specific trait
 Trt <- tapply(correctedValues$kgHa, list (correctedValues$germplasmName, correctedValues$Location), mean)
 AMMI_Trt <- bilinear(x = Trt , verbose=F)
-AMMIplot(AMMI_Trt)
+# AMMIplot(AMMI_Trt)
 # abline(v=-0.05, col="red")
 # abline(v=+0.05, col="red")
 # AMMIplot(AMMIfit, PC=2)
